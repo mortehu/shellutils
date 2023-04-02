@@ -11,17 +11,14 @@ def find_files(filename, start_dir="."):
 
     while queue:
         current_dir, depth = queue.pop(0)
-        found = False
+        if found_files and depth > found_files[-1][1]:
+            break
 
         for entry in os.scandir(current_dir):
             if entry.is_dir():
                 queue.append((entry.path, depth + 1))
             elif entry.name.startswith(filename):
                 found_files.append((entry.path, depth))
-                found = True
-
-        if found_files and not found:
-            break
 
     return found_files
 
