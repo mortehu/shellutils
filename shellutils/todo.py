@@ -1,3 +1,4 @@
+import argparse
 import sys
 import os
 import sqlite3
@@ -36,19 +37,27 @@ def mark_done(conn, todo):
     conn.execute("UPDATE todos SET done = 1 WHERE todo = ? AND done = 0", (todo,))
     conn.commit()
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="A simple command line todo app.")
+    parser.add_argument("todo", nargs="*", help="The todo to be added or marked as done.")
+    parser.add_argument("--done", action="store_true", help="Mark a todo as done.")
+    return parser.parse_args()
+
 def main():
+    args = parse_arguments()
+
     database_path = get_database_path()
     conn = initialize_database(database_path)
     
-    if len(sys.argv) == 1:
-        print_todos(conn)
-    elif sys.argv[1] == "--done":
-        if len(sys.argv) > 2:
-            mark_done(conn, " ".join(sys.argv[2:]))
+    if args.done:
+        if args.todo:
+            mark_done(conn, " ".join(args.todo))
         else:
             print("Usage: todo.py --done \"TODO text\"")
+    elif args.todo:
+        add_todo(conn, " ".join(args.todo))
     else:
-        add_todo(conn, " ".join(sys.argv[1:]))
+        print_todos(conn)
 
     conn.close()
 
