@@ -8,6 +8,7 @@ setup(
     entry_points={
         "console_scripts": [
             "v = shellutils.v:main",
+            "todo = shellutils.todo:main",
         ],
     },
     author="Morten Hustveit",
